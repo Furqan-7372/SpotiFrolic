@@ -57,7 +57,7 @@ const LoginScreen: React.FC<ILoginScreen> = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.cancelButton]}
-          onPress={() => navigation.goBack()}>
+          onPress={navigation.navigate('Login')}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>

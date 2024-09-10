@@ -6,6 +6,7 @@ import styles from './style';
 import {Image} from 'react-native';
 import Colors from '../../../Utils/color';
 
+
 const WelcomeScreen: React.FC<IWelcomeScreen> = ({navigation}) => {
   return (
     <View style={styles.container}>
