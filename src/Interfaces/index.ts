@@ -5,19 +5,22 @@ type TAddress = {
     zip:number
 }
 
-interface IUser {
+export interface IUser {
   name: string,
   contact: string,
   picture: string,
   address: TAddress
 }
+export interface IWelcomeScreen {
+  
+}
 
-interface IRestaurant {
+export interface IRestaurant {
   name: string,
   address: TAddress
 }
 
-interface IHotel {
+export interface IHotel {
   name: string,
   address: TAddress[]
 }

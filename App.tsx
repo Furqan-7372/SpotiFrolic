@@ -1,117 +1,142 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import WelcomeScreen from './src/Screens/Auth/Welcome';
+import SignUpScreen from './src/Screens/Auth/Signup';
+import LoginScreen from './src/Screens/Auth/Login';
+import HomeScreen from './src/Screens/Home';
+import SearchScreen from './src/Screens/Search';
+import LibraryScreen from './src/Screens/Library';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// Bottom Tabs Stack
+const MainApp = createBottomTabNavigator();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+// Authentication Stack
+const AuthStack = createStackNavigator();
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+// Main App Stack
+const MainAppStack = createStackNavigator();
+
+const dummyState = false;
+
+function AuthStackScreen() {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <AuthStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+    </AuthStack.Navigator>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+function MainAppStackScreen() {
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <MainAppStack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <MainAppStack.Screen name="Home" component={HomeScreen} />
+      <MainAppStack.Screen name="Search" component={SearchScreen} />
+      <MainAppStack.Screen name="Library" component={LibraryScreen} />
+    </MainAppStack.Navigator>
+  );
+}
+
+function MainNav() {
+  return (
+    <MainApp.Navigator>
+      <MainApp.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="home" color={color} size={size} />
+          ),
+        }}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <MainApp.Screen
+        name="Search"
+        component={SearchScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="search" color={color} size={size} />
+          ),
+        }}
+      />
+      <MainApp.Screen
+        name="Library"
+        component={LibraryScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color, size}) => (
+            <Ionicons name="folder-open-outline" color={color} size={size} />
+          ),
+        }}
+      />
+    </MainApp.Navigator>
+  );
+}
+
+function Navigation() {
+  return (
+    <NavigationContainer>
+      {!dummyState && <AuthStackScreen />}
+      {dummyState && <MainNav />}
+    </NavigationContainer>
+  );
+}
+
+function Root() {
+  return <Navigation />;
+}
+
+function App(): React.ReactElement {
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle={'light-content'} />
+      <Root />
+      {/* 
+      <NavigationContainer>
+        <BottomTabs.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <BottomTabs.Screen
+            name="Auth"
+            component={AuthStackScreen}
+          />
+          <BottomTabs.Screen
+            name="MainApp"
+            component={MainAppStackScreen}
+          />
+        </BottomTabs.Navigator>
+      </NavigationContainer> */}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#00000000',
   },
 });
 

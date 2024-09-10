@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-interface LoginScreenProps {
+interface LibraryScreenProps {
   navigation: any;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const LibraryScreen: React.FC<LibraryScreenProps> = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
-      <Text onPress={() => navigation.goBack()}>Go Back</Text>
+      <Text>Library Screen</Text>
+      <Text onPress={() => navigation.navigate('Home')}>Back to Home</Text>
     </View>
   );
 };
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default LibraryScreen;
