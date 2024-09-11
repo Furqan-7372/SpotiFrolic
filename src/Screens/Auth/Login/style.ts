@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     height: 50,
-    backgroundColor: Colors.backgroundColor,
+    backgroundColor: Colors.primary0,
     borderRadius: 8,
     paddingHorizontal: 16,
     color: Colors.primary0,
@@ -44,11 +44,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   cancelButton: {
-    backgroundColor: Colors.backgroundColor,
+    backgroundColor: Colors.primary0,
   },
   buttonText: {
-    color: Colors.primary0,
+    color: Colors.primary50,
     fontSize: 16,
+    fontWeight: "bold",
   },
   signUpText: {
     color: Colors.primary0,

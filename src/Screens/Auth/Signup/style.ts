@@ -4,7 +4,7 @@ import Colors from "../../../Utils/color";
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#000',
+      backgroundColor: Colors.primary50,
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
@@ -13,26 +13,28 @@ const styles = StyleSheet.create({
       width: 150,
       height: 150,
       resizeMode: 'contain',
-      marginBottom: 20,
+      
     },
     infoText: {
-      color: '#fff',
+      color: Colors.primary0,
       fontSize: 18,
       marginBottom: 20,
     },
     input: {
       width: '100%',
       height: 50,
-      backgroundColor: '#333',
+      backgroundColor: Colors.primary0,
       borderRadius: 8,
       paddingHorizontal: 16,
-      color: '#fff',
+      color: Colors.primary50,
       marginBottom: 10,
     },
     rememberMeContainer: {
+      width: '90%',
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 20,
+      margin: 10,
+      
     },
     checkboxContainer: {
       flexDirection: 'row',
@@ -43,14 +45,14 @@ const styles = StyleSheet.create({
       height: 20,
       borderRadius: 4,
       borderWidth: 1,
-      borderColor: '#aaa',
+      borderColor: Colors.primary0,
       marginRight: 8,
     },
     checkboxChecked: {
-      backgroundColor: '#1DB954',
+      backgroundColor: Colors.primary800,
     },
     rememberMeText: {
-      color: '#fff',
+      color: Colors.primary0,
       fontSize: 16,
     },
     buttonContainer: {
@@ -64,23 +66,24 @@ const styles = StyleSheet.create({
       height: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#1DB954',
+      backgroundColor: Colors.primary800,
       borderRadius: 8,
       marginHorizontal: 8,
     },
     cancelButton: {
-      backgroundColor: '#555',
+      backgroundColor: Colors.primary0,
     },
     buttonText: {
-      color: '#fff',
+      color: Colors.primary50,
       fontSize: 16,
+      fontWeight: "bold",
     },
     signInText: {
-      color: '#fff',
+      color: Colors.primary0,
       fontSize: 16,
     },
     signInLink: {
-      color: '#1DB954',
+      color: Colors.primary800,
       fontWeight: 'bold',
     },
   });

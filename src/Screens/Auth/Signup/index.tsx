@@ -59,7 +59,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}
-            onPress={() => navigation.goBack()}
+            onPress={()=>{navigation.navigate('Welcome')}}
           >
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>

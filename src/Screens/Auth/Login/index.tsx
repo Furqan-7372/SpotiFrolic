@@ -28,7 +28,7 @@ const LoginScreen: React.FC<ILoginScreen> = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../Assets/Images/SpotifyLogo/SpotifyWrittenLogo.png')}
+ source={require('../../../Assets/Images/SpotifyLogo/SpotifyWrittenLogo.png')}       
         style={styles.logo}
       />
       <Text style={styles.infoText}>Please enter your login details</Text>
@@ -57,7 +57,7 @@ const LoginScreen: React.FC<ILoginScreen> = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.cancelButton]}
-          onPress={navigation.navigate('Login')}>
+          onPress={()=>{navigation.navigate('Welcome')}}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>

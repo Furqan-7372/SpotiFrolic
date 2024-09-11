@@ -1,14 +1,31 @@
 import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-// Define the types for your screens
-type RootStackParamList = {
+// Define the types for stack navigators
+export type RootStackParamList = {
   WelcomeScreen: undefined; // or add params if needed
   LoginScreen: undefined;   // or add params if needed
+  // Other stack screens if any
 };
 
-// Navigation prop types for each screen
+// Define the types for bottom tab navigators
+export type BottomTabParamList = {
+  Home: undefined; // No parameters for Home screen
+  Search: undefined; // No parameters for Search screen
+  Library: undefined; // No parameters for Library screen
+  // Add other screens if necessary
+};
+
+// Navigation prop types for each stack screen
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WelcomeScreen'>;
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'LoginScreen'>;
+
+// Navigation prop types for each tab screen
+export type HomeScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Home'>;
+export type SearchScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Search'>;
+export type LibraryScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Library'>;
+
+// Define other types for your application
 
 type TAddress = {
   country: string;
