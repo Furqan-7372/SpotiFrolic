@@ -2,7 +2,7 @@ import {images} from '../Assets/Images/ImageAssets';
 
 export const singers = [
   {id: '1', name: 'Artist One', image: images.rdj}, // Using local image
-  {id: '2', name: 'Artist Two', image: images.rdj}, // Using local image
+  {id: '2', name: 'Artist Two', image: {uri: 'https://image.tmdb.org/t/p/w500/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg' }}, // Using local image
 ];
 
 export const trendingSongs = [
