@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Pressable,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Image, Pressable} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import styles from './style';
 import Slider from '@react-native-community/slider';
@@ -14,16 +8,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Utils/color';
 
 const MusicScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
           <FontAwesome5 name="chevron-down" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>
-          PLAYING FROM SEARCH{'\n'}
+        <View>
+          <Text style={styles.headerText}>PLAYING FROM SEARCH</Text>
           <Text style={styles.headerSubText}>"stay" in Songs</Text>
-        </Text>
+        </View>
         <TouchableOpacity style={styles.optionsButton}>
           <FontAwesome5 name="ellipsis-v" size={20} color="white" />
         </TouchableOpacity>
@@ -52,17 +50,17 @@ const MusicScreen = () => {
       </View>
       <View>
         <Slider
-            style={{width: 350, height: 40, alignSelf: 'center'}}
-            minimumValue={0}
-            maximumValue={1}
-            minimumTrackTintColor="#FFFFFF"
-            thumbTintColor="white"
-            maximumTrackTintColor="#000000ff"
-          />
-          <View style={styles.sliderContainer} >
-        <Text style={styles.time}>1:23</Text>
-        <Text style={styles.time}>3:36</Text>
-          </View>
+          style={{width: 350, height: 40, alignSelf: 'center'}}
+          minimumValue={0}
+          maximumValue={1}
+          minimumTrackTintColor="#FFFFFF"
+          thumbTintColor="white"
+          maximumTrackTintColor="#000000ff"
+        />
+        <View style={styles.sliderContainer}>
+          <Text style={styles.time}>1:23</Text>
+          <Text style={styles.time}>3:36</Text>
+        </View>
       </View>
       <View style={styles.audioControls}>
         <TouchableOpacity style={styles.controlButton}>

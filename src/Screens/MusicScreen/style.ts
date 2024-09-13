@@ -19,11 +19,12 @@ const styles = StyleSheet.create({
   headerText: {
     color: 'white',
     fontSize: 18,
-    fontWeight: 'bold',
   },
   headerSubText: {
-    fontWeight: 'normal',
-    fontSize: 14,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 19,
+    textAlign: 'center',
   },
   optionsButton: {
     padding: 5,

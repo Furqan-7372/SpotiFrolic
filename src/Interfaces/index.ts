@@ -6,29 +6,28 @@ import { StyleProp, ViewStyle } from 'react-native';
 export type RootStackParamList = {
   WelcomeScreen: undefined; // or add params if needed
   LoginScreen: undefined;   // or add params if needed
-  // Add other stack screens if any
-  Playlist?: undefined; // Example if Playlist is a stack screen
+  Playlist: undefined;      // Ensure Playlist is included if it's part of the stack navigator
+  Music: undefined;         // Include Music if it's part of the stack navigator
 };
 
 // Define the types for bottom tab navigators
 export type BottomTabParamList = {
-  Home: undefined; // No parameters for Home screen
-  Search: undefined; // No parameters for Search screen
+  Home: undefined;    // No parameters for Home screen
+  Search: undefined;  // No parameters for Search screen
   Library: undefined; // No parameters for Library screen
-  Playlist?: undefined; // Add Playlist or other screens if necessary
-  // Add other screens if necessary
+  // Playlist should not be defined here if it's used in the stack navigator
 };
 
 // Navigation prop types for each stack screen
 export type WelcomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'WelcomeScreen'>;
 export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'LoginScreen'>;
 export type PlaylistScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Playlist'>; // Added for Playlist screen
+export type MusicScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Music'>; // Added for Music screen
 
 // Navigation prop types for each tab screen
 export type HomeScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Home'>;
 export type SearchScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Search'>;
 export type LibraryScreenNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Library'>;
-export type PlaylistScreenTabNavigationProp = BottomTabNavigationProp<BottomTabParamList, 'Playlist'>; // Added for Playlist screen
 
 // Define other types for your application
 type TAddress = {

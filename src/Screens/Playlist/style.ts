@@ -101,6 +101,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    // Add more styles as needed
+  },
+  modalCloseButton: {
+    alignItems: 'center',
+    padding: 10,
+  },
+  modalText: {
+    fontSize: 18,
+    // Add more styles as needed
+  },
 });
 
 export default styles;

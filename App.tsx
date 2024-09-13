@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import WelcomeScreen from './src/Screens/Auth/Welcome';
@@ -37,10 +37,15 @@ function AuthStackScreen() {
 
 function HomeStackHandler() {
   return (
-    <HomeStack.Navigator screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
+    <HomeStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        presentation: 'modal', // This enables modal presentation
+      }}
+    >
+      <HomeStack.Screen name="HomeStack" component={HomeScreen} />
       <HomeStack.Screen name="Playlist" component={PlaylistScreen} />
-      <HomeStack.Screen name="Music" component={MusicScreen} />
+      <HomeStack.Screen name="Music" component={MusicScreen} options={{ presentation: 'modal' }} />
     </HomeStack.Navigator>
   );
 }
