@@ -77,3 +77,57 @@ export interface IMusicTile {
   onPress: () => void;
   containerStyle?: StyleProp<ViewStyle>;
 }
+
+export interface AccessTokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+}
+
+export interface ArtistImage {
+  height: number;
+  url: string;
+  width: number;
+}
+
+export interface ArtistResponse {
+  external_urls: {
+    spotify: string;
+  };
+  followers: {
+    href: string | null;
+    total: number;
+  };
+  genres: string[];
+  href: string;
+  id: string;
+  images: ArtistImage[];
+  name: string;
+  popularity: number;
+  type: string;
+  uri: string;
+}
+
+export interface CategoryImage {
+  height: number;
+  url: string;
+  width: number;
+}
+
+export interface CategoryResponse {
+  categories: {
+    items: {
+      id: string;
+      name: string;
+      icons: CategoryImage[];
+    }[];
+  };
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  icons: {
+    url: string;
+  }[];
+}
