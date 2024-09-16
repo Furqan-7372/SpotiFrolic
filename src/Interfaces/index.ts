@@ -131,3 +131,11 @@ export interface Category {
     url: string;
   }[];
 }
+
+export interface PlaylistState {
+  songs: string[];
+}
+
+export interface AlbumRespone {
+  
+}

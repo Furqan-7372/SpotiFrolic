@@ -1,14 +1,18 @@
 // Api.tsx
-
-import { useState } from 'react';
 import axios from 'axios';
-import { AccessTokenResponse, CategoryResponse, ArtistResponse   } from '../Interfaces/index'
+import {
+  AccessTokenResponse,
+  CategoryResponse,
+  ArtistResponse,
+  AlbumRespone,
+} from '../Interfaces/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_CATEGORIES_URL = 'https://api.spotify.com/v1/browse/categories';
 const SPOTIFY_ARTIST_URL = 'https://api.spotify.com/v1/artists';
-
+const SPOTIFY_ALBUM_URL = 'https://api.spotify.com/v1/browse/new-releases'
+let token: string | undefined = '';
 
 // API Client configuration
 const client_id = 'aeba5d8ad05349f6906897cb3409db36'; // Replace with your Client ID
@@ -22,11 +26,15 @@ export async function fetchAccessToken(): Promise<string> {
   params.append('client_secret', client_secret);
 
   try {
-    const response = await axios.post<AccessTokenResponse>(SPOTIFY_TOKEN_URL, params.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const response = await axios.post<AccessTokenResponse>(
+      SPOTIFY_TOKEN_URL,
+      params.toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       },
-    });
+    );
     // console.log(response, 'First Step')
     return response.data.access_token;
   } catch (error) {
@@ -36,35 +44,45 @@ export async function fetchAccessToken(): Promise<string> {
 }
 
 // Function to get categories data
-export async function fetchCategories(accessToken: string, retries: number = 3, delay: number = 1000): Promise<CategoryResponse> {
-    try {
-      const response = await axios.get<CategoryResponse>(SPOTIFY_CATEGORIES_URL, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      if (error.response?.status === 429 && retries > 0) {
-        // Rate limit error, retry with exponential backoff
-        console.warn(`Rate limit exceeded. Retrying in ${delay} ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return fetchCategories(accessToken, retries - 1, delay * 2);
-      } else {
-        console.error('Error fetching categories:', error);
-        throw new Error('Unable to fetch categories');
-      }
-    }
-  }
-
-// Function to get artist data
-export async function fetchArtistData(artistId: string, accessToken: string): Promise<ArtistResponse> {
+export async function fetchCategories(
+  accessToken: string,
+  retries: number = 3,
+  delay: number = 1000,
+): Promise<CategoryResponse> {
   try {
-    const response = await axios.get<ArtistResponse>(`${SPOTIFY_ARTIST_URL}/${artistId}`, {
+    const response = await axios.get<CategoryResponse>(SPOTIFY_CATEGORIES_URL, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 429 && retries > 0) {
+      // Rate limit error, retry with exponential backoff
+      console.warn(`Rate limit exceeded. Retrying in ${delay} ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchCategories(accessToken, retries - 1, delay * 2);
+    } else {
+      console.error('Error fetching categories:', error);
+      throw new Error('Unable to fetch categories');
+    }
+  }
+}
+
+// Function to get artist data
+export async function fetchArtistData(
+  artistId: string,
+  accessToken: string,
+): Promise<ArtistResponse> {
+  try {
+    const response = await axios.get<ArtistResponse>(
+      `${SPOTIFY_ARTIST_URL}/${artistId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching artist data:', error);
@@ -72,38 +90,60 @@ export async function fetchArtistData(artistId: string, accessToken: string): Pr
   }
 }
 
+export async function fetchAlbumsData(
+  accessToken: string,
+): Promise <AlbumRespone> {
+  try {
+    const response = await axios.get<AlbumRespone>(
+      `${SPOTIFY_ALBUM_URL}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    console.log(JSON.stringify(response.data.albums.items[0].name, null, 2), 'response')
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching album data:', error);
+    throw new Error('Unable to fetch album data');
+  }
+}
+
+
 // Example usage of the functions
+
 export function useSpotifyApi() {
-  const [accessToken, setAccessToken] = useState<string | null>('');
-
-  const initialize = async (setAccessToken?: any ) => {
-    let token
-
+  const initialize = async () => {
     try {
       token = await fetchAccessToken();
-      console.log(token, 'token')
+      console.log(token, 'token');
     } catch (error) {
       console.error('Initialization error:', error);
     }
-    
-    return token
-
   };
 
-
-  const getCategories = async (accessToken) => {
-    if (!accessToken) {
-      throw new Error('Access token is not set');
+  const getCategories = async () => {
+    if (!token) {
+      token = await fetchAccessToken()
     }
-    return await fetchCategories(accessToken);
+    return await fetchCategories(token);
   };
 
   const getArtistData = async (artistId: string) => {
-    if (!accessToken) {
+    if (!token) {
       throw new Error('Access token is not set');
     }
-    return await fetchArtistData(artistId, accessToken);
+    return await fetchArtistData(artistId, token);
   };
 
-  return { initialize, getCategories, getArtistData };
+  const getAlbumData = async () => {
+    if (!token) {
+      token = await fetchAccessToken()
+    }
+    return await fetchAlbumsData(token);
+  }
+
+  return {initialize, getCategories, getArtistData, getAlbumData};
 }

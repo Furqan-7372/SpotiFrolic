@@ -57,6 +57,12 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: "center",
     },
+    icon: {
+        width: 50,
+        height: 50,
+        marginRight: 16,
+        borderRadius: 8,
+      },
 });
 
 export default styles;
