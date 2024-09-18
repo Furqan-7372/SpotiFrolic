@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 5,
   },
+  headerContainer: {
+    alignItems: 'center',
+  },
   headerText: {
     color: 'white',
     fontSize: 18,
@@ -25,6 +28,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 19,
     textAlign: 'center',
+    width: 280,
   },
   optionsButton: {
     padding: 5,

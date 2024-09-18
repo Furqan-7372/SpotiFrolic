@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, FlatList, ScrollView} from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from '../../Interfaces/index'; // Import your types
@@ -7,8 +7,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {trendingSongs, singers, topPicksSongs} from '../../Utils/data';
 import Tile from '../../Components/Tile';
 import {useSpotifyApi} from '../../Apis/index';
-import {AlbumRespone} from '../../Interfaces';
-import {HomeScreenData} from '../../Components/HomeScreenData';
 
 type HomeScreenNavigationProp = BottomTabNavigationProp<
   BottomTabParamList,
@@ -20,25 +18,47 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const [albums, setAlbums] = useState<any>()
+  const [albums, setAlbums] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
+  const {getAlbumData, getTracksData, getRecommendationData} = useSpotifyApi();
 
-  
-  function dataHandler() {
-    setAlbums (HomeScreenData())
-    console.log('Hello', albums)
+  const albumDataHandler = async () => {
+    const response = await getAlbumData();
+    setAlbums(response?.data?.albums.items);
+  };
+  const trackDataHandler = async () => {
+    const response = await getTracksData();
+    setTracks(response?.data?.tracks);
+  };
+  const recommendationDataHandler = async () => {
+    const response = await getRecommendationData();
+    setRecommendations(response?.data?.tracks);
+  };
+  function artistHandler(item) {
+    return item.artists.map(artist => artist.name).join(', ');
   }
 
+  
   useEffect(() => {
-    dataHandler();
+    albumDataHandler();
+    trackDataHandler();
+    recommendationDataHandler();
   }, []);
 
   const imageUrlIs =
     'https://image.tmdb.org/t/p/w500/5qHNjhtjMD4YWH3UP0rm4tKwxCL.jpg';
 
-  function onPressHandler() {
-    console.log('Open Playlist');
-    navigation.navigate('Playlist');
-  }
+  const onPressHandler = item => {
+    navigation.navigate('Playlist', {
+      albumName: item.name,
+      artists: item.artists.map(artist => artist.name).join(', '),
+      albumId: item.id,
+    });
+  };
+  const handleMusicNavigation = (trackId: string, name: string) => {
+    navigation.navigate('Music', {trackId, name});
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -53,33 +73,37 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
       {/* Large Tiles */}
       <View style={styles.tileContainer}>
-        <Tile
-          onPress={onPressHandler}
-          title={singers[1].name}
-          imageUrl={imageUrlIs}
-        />
-        <Tile
-          onPress={onPressHandler}
-          title={singers[0].name}
-          imageUrl={imageUrlIs}
+        {/* Trending Now */}
+        <FlatList
+          data={albums}
+          renderItem={({item}) => (
+            <View>
+              <Tile
+                onPress={() => onPressHandler(item)}
+                title={item.name}
+                description={artistHandler(item)}
+                imageUrl={imageUrlIs}
+              />
+            </View>
+          )}
+          horizontal
+          showsHorizontalScrollIndicator={false} // Optional: hides horizontal scroll indicator
         />
       </View>
-
       {/* Trending Now */}
       <Text style={styles.heading}>Trending now</Text>
       <FlatList
-        data={albums}
+        data={tracks}
         renderItem={({item}) => (
           <View>
             <Tile
-              onPress={onPressHandler}
+              onPress={()=>handleMusicNavigation(item.id, item.name)}
               title={item.name}
-              description={item.singer}
+              description={artistHandler(item)}
               imageUrl={imageUrlIs}
             />
           </View>
         )}
-        keyExtractor={item => item.id}
         horizontal
         showsHorizontalScrollIndicator={false} // Optional: hides horizontal scroll indicator
       />
@@ -87,13 +111,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       {/* Top Picks for You */}
       <Text style={styles.heading}>Top picks for you</Text>
       <FlatList
-        data={topPicksSongs}
+        data={recommendations}
         renderItem={({item}) => (
           <View>
             <Tile
-              onPress={onPressHandler}
+              onPress={()=>handleMusicNavigation(item.id, item.name)}
               title={item.name}
-              description={item.singer}
+              description={artistHandler(item)}
               imageUrl={imageUrlIs}
             />
           </View>

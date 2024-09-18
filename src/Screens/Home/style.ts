@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
       flexGrow: 1,
       backgroundColor: '#000',
       padding: 16,
+      paddingBottom: 50,
     },
     header: {
       flexDirection: 'row',

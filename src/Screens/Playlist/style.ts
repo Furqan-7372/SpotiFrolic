@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   songList: {
     marginTop: 16,
     paddingHorizontal: 16,
+    paddingBottom: 60,
   },
   songItem: {
     flexDirection: 'row',

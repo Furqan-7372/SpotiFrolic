@@ -3,6 +3,9 @@ import Colors from '../../Utils/color';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: 180,
+    marginHorizontal: 10,
+    alignItems: 'center',
     // padding: 10,
     
     borderRadius: 10,
@@ -13,7 +16,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   imageContainer:{
-    flex: 3,
+    
     padding: 10,
 },
 image: {
@@ -22,13 +25,14 @@ image: {
 },
 textContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
+    width: 180,
     fontSize: 18,
     fontWeight: 'bold',
     color: Colors.primary0,
+    textAlign:'center',
   },
   description: {
     fontSize: 14,

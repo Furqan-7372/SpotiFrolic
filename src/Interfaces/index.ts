@@ -136,6 +136,14 @@ export interface PlaylistState {
   songs: string[];
 }
 
-export interface AlbumRespone {
+export interface AlbumResponse {
+  
+}
+
+export interface TrackResponse {
+  
+}
+
+export interface RecommendationResponse {
   
 }

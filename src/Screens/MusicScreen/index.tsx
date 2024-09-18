@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {View, Text, TouchableOpacity, Image, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -6,9 +6,41 @@ import styles from './style';
 import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Utils/color';
+import { useSpotifyApi } from '../../Apis';
 
-const MusicScreen = () => {
+const MusicScreen = ({route}) => {
+  const { trackId, name } = route.params;
+  const {getTrackData} = useSpotifyApi()
   const navigation = useNavigation();
+  const [track, setTrack] = useState();
+  const [mins, setMins] = useState('')
+  const [secs, setSecs] = useState('')
+  
+  function artistHandler() {
+    return track?.artists?.map(artist => artist.name).join(', ');
+  }
+
+  const timeHandler = () => {
+    const minutes = Math.floor((track?.duration_ms / (1000 * 60)) % 60);
+    const seconds = Math.floor((track?.duration_ms / 1000) % 60);
+  
+    // Format minutes and seconds to always be two digits
+    const formattedMins = minutes.toString().padStart(2, '0');
+    const formattedSecs = seconds.toString().padStart(2, '0');
+  
+    setMins(formattedMins); // Set formatted string
+    setSecs(formattedSecs); // Set formatted string
+  }
+
+  const albumDataHandler = async () => {
+    const response = await getTrackData(trackId);
+    setTrack(response?.data);
+  };
+
+  useEffect(() => {
+    albumDataHandler();
+    timeHandler()
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -18,9 +50,9 @@ const MusicScreen = () => {
           onPress={() => navigation.goBack()}>
           <FontAwesome5 name="chevron-down" size={20} color="white" />
         </TouchableOpacity>
-        <View>
+        <View style={styles.headerContainer} >
           <Text style={styles.headerText}>PLAYING FROM SEARCH</Text>
-          <Text style={styles.headerSubText}>"stay" in Songs</Text>
+          <Text style={styles.headerSubText}>"{name}" in Songs</Text>
         </View>
         <TouchableOpacity style={styles.optionsButton}>
           <FontAwesome5 name="ellipsis-v" size={20} color="white" />
@@ -34,9 +66,9 @@ const MusicScreen = () => {
       </View>
       <View style={styles.musicDetails}>
         <View>
-          <Text style={styles.musicDetailsText}>STAY (with Justin Bieber)</Text>
+          <Text style={styles.musicDetailsText}>{name}</Text>
           <Text style={styles.musicDetailsText}>
-            The Kid LAROI, Justin Bieber
+            {artistHandler()}
           </Text>
         </View>
         <View>
@@ -58,8 +90,8 @@ const MusicScreen = () => {
           maximumTrackTintColor="#000000ff"
         />
         <View style={styles.sliderContainer}>
-          <Text style={styles.time}>1:23</Text>
-          <Text style={styles.time}>3:36</Text>
+          <Text style={styles.time}>0:00</Text>
+          <Text style={styles.time}>{mins}:{secs}</Text>
         </View>
       </View>
       <View style={styles.audioControls}>

@@ -10,19 +10,16 @@ const Tile: React.FC<ITile> = ({
   onPress,
   containerStyle,
 }) => {
-
-    function descriptionHandler(){
-        if (description) {
-            return(
-                <Text style={styles.description}>{description}</Text>
-            )
-        }
+  function descriptionHandler() {
+    if (description) {
+      return <Text style={styles.description}>{description}</Text>;
     }
+  }
   return (
     <TouchableOpacity
       onPress={onPress}
       style={[styles.container, containerStyle]}>
-      <View style={styles.imageContainer} >
+      <View style={styles.imageContainer}>
         <Image source={{uri: imageUrl}} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
