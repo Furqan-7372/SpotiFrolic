@@ -1,5 +1,4 @@
 // Api.tsx
-import axios from 'axios';
 import {
   AccessTokenResponse,
   CategoryResponse,
@@ -7,11 +6,15 @@ import {
   AlbumResponse,
   TrackResponse,
   RecommendationResponse,
+  Genre,
 } from '../Interfaces/index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useToken} from '../Components/TokenCheck/index'
+import axios from 'axios';
 
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_CATEGORIES_URL = 'https://api.spotify.com/v1/browse/categories';
+const SPOTIFY_GENRE_URL =
+  'https://api.spotify.com/v1/recommendations/available-genre-seeds';
 const SPOTIFY_ARTIST_URL = 'https://api.spotify.com/v1/artists';
 const SPOTIFY_ALBUM_URL = 'https://api.spotify.com/v1/browse/new-releases';
 const SPOTIFY_TRACKS_URL =
@@ -20,13 +23,16 @@ const SPOTIFY_RECOMMENDATION_URL =
   'https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA';
 const SPOTIFY_ALBUM_TRACKS_URL = 'https://api.spotify.com/v1/albums';
 const SPOTIFY_TRACK_URL = 'https://api.spotify.com/v1/tracks';
+
 let token: string | undefined = '';
 
 // API Client configuration
 const client_id = 'aeba5d8ad05349f6906897cb3409db36'; // Replace with your Client ID
 const client_secret = '9ccc8e4690404353bf5423a62e9ef897'; // Replace with your Client Secret
 
-// Function to get access token
+//Abhi meine fetchAccessToken AUR fetchToken ka naam exchange kiya hua hai subah aakr wapis thk karna hai
+
+
 export async function fetchAccessToken(): Promise<string> {
   const params = new URLSearchParams();
   params.append('grant_type', 'client_credentials');
@@ -43,7 +49,8 @@ export async function fetchAccessToken(): Promise<string> {
         },
       },
     );
-    // console.log(response, 'First Step')
+    token = response?.data?.access_token
+    console.log(response.data.access_token);
     return response.data.access_token;
   } catch (error) {
     console.error('Error fetching access token:', error);
@@ -51,11 +58,12 @@ export async function fetchAccessToken(): Promise<string> {
   }
 }
 
-// Function to get categories data
+export async function fetchToken(): Promise<string> {
+  return token || ''; // Return an empty string if token is undefined
+}
+
 export async function fetchCategories(
   accessToken: string,
-  retries: number = 3,
-  delay: number = 1000,
 ): Promise<CategoryResponse> {
   try {
     const response = await axios.get<CategoryResponse>(SPOTIFY_CATEGORIES_URL, {
@@ -65,19 +73,30 @@ export async function fetchCategories(
     });
     return response.data;
   } catch (error) {
-    if (error.response?.status === 429 && retries > 0) {
-      // Rate limit error, retry with exponential backoff
-      console.warn(`Rate limit exceeded. Retrying in ${delay} ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return fetchCategories(accessToken, retries - 1, delay * 2);
-    } else {
+
       console.error('Error fetching categories:', error);
       throw new Error('Unable to fetch categories');
-    }
+    
   }
 }
 
-// Function to get artist data
+export async function fetchGenre(
+  accessToken: string,
+): Promise<Genre> {
+  console.log(accessToken);
+  try {
+    const response = await axios.get<Genre>(SPOTIFY_GENRE_URL, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Genre:', error);
+    throw new Error('Unable to fetch Genre');
+  }
+}
+
 export async function fetchArtistData(
   artistId: string,
   accessToken: string,
@@ -132,6 +151,7 @@ export async function fetchTracksData(
     throw new Error('Unable to fetch TRACK data');
   }
 }
+
 export async function fetchRecommendationData(
   accessToken: string,
 ): Promise<RecommendationResponse> {
@@ -151,6 +171,7 @@ export async function fetchRecommendationData(
     throw new Error('Unable to fetch TRACK data');
   }
 }
+
 export async function fetchAlbumTracksData(
   accessToken: string,
   albumId: string,
@@ -172,6 +193,7 @@ export async function fetchAlbumTracksData(
   }
   // --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
 }
+
 export async function fetchTrackData(
   accessToken: string,
   trackId: string,
@@ -200,11 +222,12 @@ export async function fetchTrackData(
 export function useSpotifyApi() {
   const initialize = async () => {
     try {
-      token = await fetchAccessToken();
+      token = await fetchToken();
       console.log(token, 'token');
     } catch (error) {
       console.error('Initialization error:', error);
     }
+    return token
   };
 
   const getCategories = async () => {
@@ -212,6 +235,12 @@ export function useSpotifyApi() {
       token = await fetchAccessToken();
     }
     return await fetchCategories(token);
+  };
+  const getGenres = async () => {
+    if (!token) {
+      token = await fetchAccessToken();
+    }
+    return await fetchGenre(token);
   };
 
   const getArtistData = async (artistId: string) => {
@@ -265,6 +294,7 @@ export function useSpotifyApi() {
     getRecommendationData,
     getAlbumTracksData,
     getTrackData,
+    getGenres,
   };
 }
 

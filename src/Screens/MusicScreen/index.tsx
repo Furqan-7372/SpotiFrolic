@@ -7,6 +7,9 @@ import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Utils/color';
 import { useSpotifyApi } from '../../Apis';
+import SoundPlayer from 'react-native-sound-player';
+import MusicPlayer from '../../Components/MusicPlayer';
+
 
 const MusicScreen = ({route}) => {
   const { trackId, name } = route.params;
@@ -15,6 +18,10 @@ const MusicScreen = ({route}) => {
   const [track, setTrack] = useState();
   const [mins, setMins] = useState('')
   const [secs, setSecs] = useState('')
+  const [url, setUrl] = useState('')
+
+
+
   
   function artistHandler() {
     return track?.artists?.map(artist => artist.name).join(', ');
@@ -34,6 +41,7 @@ const MusicScreen = ({route}) => {
 
   const albumDataHandler = async () => {
     const response = await getTrackData(trackId);
+    setUrl(response?.data?.preview_url)
     setTrack(response?.data);
   };
 
@@ -80,37 +88,7 @@ const MusicScreen = ({route}) => {
           </Pressable>
         </View>
       </View>
-      <View>
-        <Slider
-          style={{width: 350, height: 40, alignSelf: 'center'}}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor="#FFFFFF"
-          thumbTintColor="white"
-          maximumTrackTintColor="#000000ff"
-        />
-        <View style={styles.sliderContainer}>
-          <Text style={styles.time}>0:00</Text>
-          <Text style={styles.time}>{mins}:{secs}</Text>
-        </View>
-      </View>
-      <View style={styles.audioControls}>
-        <TouchableOpacity style={styles.controlButton}>
-          <FontAwesome5 name="random" size={30} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton}>
-          <FontAwesome5 name="step-backward" size={60} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton}>
-          <FontAwesome5 name="pause-circle" size={80} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton}>
-          <FontAwesome5 name="step-forward" size={60} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton}>
-          <FontAwesome5 name="redo-alt" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
+      <MusicPlayer url={url}/>
       <View style={styles.extraControls}>
         <TouchableOpacity style={styles.controlButton}>
           <FontAwesome5 name="desktop" size={20} color="white" />

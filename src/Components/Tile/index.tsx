@@ -12,7 +12,7 @@ const Tile: React.FC<ITile> = ({
 }) => {
   function descriptionHandler() {
     if (description) {
-      return <Text style={styles.description}>{description}</Text>;
+      return <Text style={styles.description} ellipsizeMode='tail' numberOfLines={1} >{description}</Text>;
     }
   }
   return (
@@ -23,7 +23,7 @@ const Tile: React.FC<ITile> = ({
         <Image source={{uri: imageUrl}} style={styles.image} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title} numberOfLines={1} >{title}</Text>
         {descriptionHandler()}
       </View>
     </TouchableOpacity>

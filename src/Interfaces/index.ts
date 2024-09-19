@@ -132,6 +132,10 @@ export interface Category {
   }[];
 }
 
+export interface Genre {
+  
+}
+
 export interface PlaylistState {
   songs: string[];
 }

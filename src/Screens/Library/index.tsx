@@ -1,87 +1,57 @@
-// CategoriesScreen.tsx
+import React from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
-import {useSpotifyApi} from '../../Apis/index';
-import {Category} from '../../Interfaces';
-
-const CategoriesScreen: React.FC = () => {
-  const {getCategories} = useSpotifyApi();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const ApiCallHandler = async () => {
-    try {
-      const categoriesData = await getCategories();
-      setCategories(categoriesData.categories.items);
-    } catch (err) {
-      console.error(err);
-      setError('Error fetching categories');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    ApiCallHandler();
-  }, []);
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
-  }
-
-  if (error) {
-    return <Text>{error}</Text>;
-  }
-
-  const renderItem = ({item}: {item: Category}) => (
-    <View
-     style={styles.itemContainer}>
-      {item.icons[0] && (
-        <Image source={{uri: item.icons[0].url}} style={styles.icon} />
-      )}
-      <Text style={styles.name}>{item.name}</Text>
-    </View>
-  );
+const SectionedScrollView = () => {
+  const sections = [
+    { title: 'Section 1', content: ['Item 1', 'Item 2', 'Item 3','Item 1', 'Item 2', 'Item 3'] },
+    { title: 'Section 2', content: ['Item A', 'Item B', 'Item C'] },
+    { title: 'Section 3', content: ['Item X', 'Item Y', 'Item Z'] },
+  ];
 
   return (
-    <View>
-      <FlatList
-        data={categories}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.container}
-      />
+    <View style={styles.container}>
+      {sections.map((section, index) => (
+        <View key={index} style={styles.section}>
+          <Text style={styles.title}>{section.title}</Text>
+          <ScrollView style={styles.scrollView}>
+            {section.content.map((item, idx) => (
+              <Text key={idx} style={styles.item}>
+                {item}
+              </Text>
+            ))}
+          </ScrollView>
+        </View>
+      ))}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
+    padding: 10,
   },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
+  section: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    overflow: 'hidden',
   },
-  icon: {
-    width: 50,
-    height: 50,
-    marginRight: 16,
-    borderRadius: 8,
-  },
-  name: {
+  title: {
     fontSize: 18,
+    fontWeight: 'bold',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  scrollView: {
+    maxHeight: 100, // Set a max height for the scrollable area
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });
 
-export default CategoriesScreen;
+export default SectionedScrollView;

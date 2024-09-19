@@ -1,24 +1,22 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   SectionList,
   ActivityIndicator,
-  Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import styles from './style';
-import {sections} from '../../Utils/data';
 import Colors from '../../Utils/color';
 import getRandomVibrantColor from '../../Components/RandomColors';
-import {useSpotifyApi} from '../../Apis/index';
-import {Category} from '../../Interfaces';
-import {FlatList} from 'react-native';
+import { useSpotifyApi } from '../../Apis/index';
+import { Category } from '../../Interfaces';
 
 const SearchScreen: React.FC = () => {
-  const {getCategories} = useSpotifyApi();
+  const { getCategories, getGenres } = useSpotifyApi();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [genres, setGenres] = useState<string[]>([]); // Assume genres is an array of strings
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,9 +24,13 @@ const SearchScreen: React.FC = () => {
     try {
       const categoriesData = await getCategories();
       setCategories(categoriesData.categories.items);
+
+      const genresData = await getGenres(); // Assuming this fetches genres
+      console.log(genresData)
+      setGenres(genresData);
     } catch (err) {
       console.error(err);
-      setError('Error fetching categories');
+      setError('Error fetching data');
     } finally {
       setLoading(false);
     }
@@ -46,33 +48,29 @@ const SearchScreen: React.FC = () => {
     return <Text>{error}</Text>;
   }
 
-  // Render function for section items
-  const renderItem = ({item}: {item: Category}) => (
+  const renderItem = ({ item }: { item: Category | string }) => (
     <View
       style={[
         styles.itemContainer,
-        {backgroundColor: getRandomVibrantColor()},
+        { backgroundColor: getRandomVibrantColor() },
       ]}>
-      {/* {item.icons[0] && (
-        <Image source={{uri: item.icons[0].url}} style={styles.icon} />
-      )} */}
-      <Text style={styles.itemText}>{item.name}</Text>
+      <Text style={styles.itemText}>{typeof item === 'string' ? item : item.name}</Text>
     </View>
   );
 
-  // Render function for section headers
-  const renderSectionHeader = ({
-    section: {title},
-  }: {
-    section: {title: string};
-  }) => <Text style={styles.sectionHeader}>{title}</Text>;
+  const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
+    <Text style={styles.sectionHeader}>{title}</Text>
+  );
+
+  const sections = [
+    { title: 'Genres', data: genres },
+    { title: 'Categories', data: categories },
+  ];
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <Text style={styles.heading}>Search</Text>
 
-      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Icon
           name="search"
@@ -87,21 +85,13 @@ const SearchScreen: React.FC = () => {
         />
       </View>
 
-      {/* SectionList */}
-      <FlatList
-        data={categories}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.container}
-        numColumns={2}
-      />
-      {/* <SectionList
-        contentContainerStyle={styles.contentContainer}
+      <SectionList
         sections={sections}
-        renderSectionHeader={renderSectionHeader}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
-      /> */}
+        renderSectionHeader={renderSectionHeader}
+        keyExtractor={(item, index) => item.id || index.toString()}
+        contentContainerStyle={styles.contentContainer}
+      />
     </View>
   );
 };
