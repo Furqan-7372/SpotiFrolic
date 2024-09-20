@@ -4,7 +4,7 @@ import {View, Text, Alert, TouchableOpacity, StyleSheet} from 'react-native';
 import SoundPlayer from 'react-native-sound-player';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const MusicPlayerScreen = ({url}) => {
+const MusicPlayer = ({url}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -52,6 +52,13 @@ const MusicPlayerScreen = ({url}) => {
     const info = await SoundPlayer.getInfo();
     setDuration(info.duration);
   };
+
+  useEffect(() => {
+    if (url) {
+      getDuration();
+      setCurrentTime(0); // Reset current time when URL changes
+    }
+  }, [url]);
 
   useEffect(() => {
     return () => {
@@ -139,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MusicPlayerScreen;
+export default MusicPlayer;

@@ -136,8 +136,9 @@ export interface Genre {
   
 }
 
-export interface PlaylistState {
-  songs: string[];
+export interface AuthState {
+  isLoggedIn: boolean,
+  accessToken: string | null,
 }
 
 export interface AlbumResponse {

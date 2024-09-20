@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './style';
 import Colors from '../../Utils/color';
 import {useSpotifyApi} from '../../Apis';
+import Share from 'react-native-share';
 
 const PlaylistScreen = ({route}) => {
   const {albumName, artists, albumId} = route.params;
@@ -54,6 +55,7 @@ const PlaylistScreen = ({route}) => {
   const albumDataHandler = async () => {
     const response = await getAlbumTracksData(albumId);
     setAlbums(response?.data?.items);
+    timeCalculator();
   };
   const timeCalculator = () => {
     const totalDuration =
@@ -67,9 +69,18 @@ const PlaylistScreen = ({route}) => {
   };
 
   useEffect(() => {
-    albumDataHandler();
-    timeCalculator();
-  }, []);
+    const fetchData = async () => {
+      try {
+        await albumDataHandler();
+      } catch (error) {
+        console.error("Error fetching album data:", error);
+      }
+    };
+    
+    fetchData();
+    
+  },[]);
+  
 
   return (
     <View style={styles.container}>

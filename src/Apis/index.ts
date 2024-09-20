@@ -1,39 +1,51 @@
-// Api.tsx
+import axios from 'axios';
+import { useToken } from '../Components/TokenCheck/index'; // Adjust the path to where useToken is located
 import {
   AccessTokenResponse,
   CategoryResponse,
-  ArtistResponse,
-  AlbumResponse,
   TrackResponse,
+  AlbumResponse,
+  ArtistResponse,
   RecommendationResponse,
-  Genre,
-} from '../Interfaces/index';
-import {useToken} from '../Components/TokenCheck/index'
-import axios from 'axios';
+} from '../Interfaces/index'; // Adjust based on your project structure
+
+const axiosInstance = axios.create({
+  baseURL: 'https://api.spotify.com/v1/',
+});
+
+// Request interceptor to include the access token
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const token = await useToken(); // Fetch the token
+    console.log(token, 'token idhar bhi hai')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle token refresh on 401 errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      // Token refresh logic can be added here if using refresh tokens
+      console.log('Token expired. Please handle refreshing the token here.');
+      // Retry the request after refreshing the token if needed
+    }
+    return Promise.reject(error);
+  }
+);
 
 const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
-const SPOTIFY_CATEGORIES_URL = 'https://api.spotify.com/v1/browse/categories';
-const SPOTIFY_GENRE_URL =
-  'https://api.spotify.com/v1/recommendations/available-genre-seeds';
-const SPOTIFY_ARTIST_URL = 'https://api.spotify.com/v1/artists';
-const SPOTIFY_ALBUM_URL = 'https://api.spotify.com/v1/browse/new-releases';
-const SPOTIFY_TRACKS_URL =
-  'https://api.spotify.com/v1/tracks?ids=7ouMYWpwJ422jRcDASZB7P%2C4VqPOruhp5EdPBeR92t6lQ%2C2takcwOaAZWiXQijPHIx7B';
-const SPOTIFY_RECOMMENDATION_URL =
-  'https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA';
-const SPOTIFY_ALBUM_TRACKS_URL = 'https://api.spotify.com/v1/albums';
-const SPOTIFY_TRACK_URL = 'https://api.spotify.com/v1/tracks';
-
-let token: string | undefined = '';
-
-// API Client configuration
 const client_id = 'aeba5d8ad05349f6906897cb3409db36'; // Replace with your Client ID
 const client_secret = '9ccc8e4690404353bf5423a62e9ef897'; // Replace with your Client Secret
 
-//Abhi meine fetchAccessToken AUR fetchToken ka naam exchange kiya hua hai subah aakr wapis thk karna hai
-
-
-export async function fetchAccessToken(): Promise<string> {
+export async function fetchToken(): Promise<string> {
   const params = new URLSearchParams();
   params.append('grant_type', 'client_credentials');
   params.append('client_id', client_id);
@@ -47,257 +59,103 @@ export async function fetchAccessToken(): Promise<string> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      },
+      }
     );
-    token = response?.data?.access_token
-    console.log(response.data.access_token);
-    return response.data.access_token;
+    return response.data.access_token; // Return the access token
   } catch (error) {
     console.error('Error fetching access token:', error);
     throw new Error('Unable to fetch access token');
   }
 }
 
-export async function fetchToken(): Promise<string> {
-  return token || ''; // Return an empty string if token is undefined
-}
-
-export async function fetchCategories(
-  accessToken: string,
-): Promise<CategoryResponse> {
+// Function to fetch categories
+export const fetchCategories = async (): Promise<CategoryResponse> => {
   try {
-    const response = await axios.get<CategoryResponse>(SPOTIFY_CATEGORIES_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axiosInstance.get('/browse/categories');
     return response.data;
   } catch (error) {
-
-      console.error('Error fetching categories:', error);
-      throw new Error('Unable to fetch categories');
-    
+    console.error('Error fetching categories:', error);
+    throw new Error('Unable to fetch categories');
   }
-}
+};
 
-export async function fetchGenre(
-  accessToken: string,
-): Promise<Genre> {
-  console.log(accessToken);
+// Function to fetch available genre seeds
+export const fetchAvailableGenres = async (): Promise<string[]> => {
   try {
-    const response = await axios.get<Genre>(SPOTIFY_GENRE_URL, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axiosInstance.get('/recommendations/available-genre-seeds');
+    return response.data.genres; // Adjust based on the actual response structure
+  } catch (error) {
+    console.error('Error fetching available genres:', error);
+    throw new Error('Unable to fetch available genres');
+  }
+};
+
+// Function to fetch artist details by ID
+export const fetchArtist = async (id: string): Promise<ArtistResponse> => {
+  try {
+    const response = await axiosInstance.get(`/artists/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching Genre:', error);
-    throw new Error('Unable to fetch Genre');
+    console.error('Error fetching artist:', error);
+    throw new Error('Unable to fetch artist');
   }
-}
+};
 
-export async function fetchArtistData(
-  artistId: string,
-  accessToken: string,
-): Promise<ArtistResponse> {
+// Function to fetch new releases
+export const fetchNewReleases = async (): Promise<AlbumResponse> => {
   try {
-    const response = await axios.get<ArtistResponse>(
-      `${SPOTIFY_ARTIST_URL}/${artistId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+    const response = await axiosInstance.get('/browse/new-releases');
     return response.data;
   } catch (error) {
-    console.error('Error fetching artist data:', error);
-    throw new Error('Unable to fetch artist data');
+    console.error('Error fetching new releases:', error);
+    throw new Error('Unable to fetch new releases');
   }
-}
+};
 
-export async function fetchAlbumsData(
-  accessToken: string,
-): Promise<AlbumResponse> {
+// Function to fetch tracks by IDs
+export const fetchTracks = async (ids: string): Promise<TrackResponse> => {
   try {
-    const response = await axios.get<AlbumResponse>(`${SPOTIFY_ALBUM_URL}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    // console.log(JSON.stringify(response.data.albums.items[0].name, null, 2), 'response')
-
-    return response;
+    const response = await axiosInstance.get(`/tracks?ids=${ids}`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching album data:', error);
-    throw new Error('Unable to fetch album data');
+    console.error('Error fetching tracks:', error);
+    throw new Error('Unable to fetch tracks');
   }
-}
+};
 
-export async function fetchTracksData(
-  accessToken: string,
-): Promise<TrackResponse> {
+// Function to fetch recommendations based on seeds
+export const fetchRecommendations = async (): Promise<RecommendationResponse> => {
   try {
-    const response = await axios.get<TrackResponse>(`${SPOTIFY_TRACKS_URL}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    // console.log(JSON.stringify(response.data?.tracks[0], null, 2), 'response')
-    return response;
+    const response = await axiosInstance.get(`/recommendations`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching TRACK data:', error);
-    throw new Error('Unable to fetch TRACK data');
+    console.error('Error fetching recommendations:', error);
+    throw new Error('Unable to fetch recommendations');
   }
-}
+};
 
-export async function fetchRecommendationData(
-  accessToken: string,
-): Promise<RecommendationResponse> {
+// Function to fetch album tracks by album ID
+export const fetchAlbumTracks = async (): Promise<TrackResponse> => {
   try {
-    const response = await axios.get<RecommendationResponse>(
-      `${SPOTIFY_RECOMMENDATION_URL}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    // console.log(JSON.stringify(response.data?.tracks[0], null, 2), 'response')
-    return response;
+    const response = await axiosInstance.get(`/browse/new-releases`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching TRACK data:', error);
-    throw new Error('Unable to fetch TRACK data');
+    console.error('Error fetching album tracks:', error);
+    throw new Error('Unable to fetch album tracks');
   }
-}
+};
 
-export async function fetchAlbumTracksData(
-  accessToken: string,
-  albumId: string,
-): Promise<RecommendationResponse> {
+// Function to fetch a specific track by ID
+export const fetchTrack = async (id: string): Promise<TrackResponse> => {
   try {
-    const response = await axios.get<RecommendationResponse>(
-      `${SPOTIFY_ALBUM_TRACKS_URL}/${albumId}/tracks`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    // console.log(JSON.stringify(response.data?.tracks[0], null, 2), 'response')
-    return response;
+    const response = await axiosInstance.get(`/tracks/${id}`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetching TRACK data:', error);
-    throw new Error('Unable to fetch TRACK data');
+    console.error('Error fetching track:', error);
+    throw new Error('Unable to fetch track');
   }
-  // --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
-}
+};
 
-export async function fetchTrackData(
-  accessToken: string,
-  trackId: string,
-): Promise<TrackResponse> {
-  try {
-    const response = await axios.get<TrackResponse>(
-      `${SPOTIFY_TRACK_URL}/${trackId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+// Add more API functions as needed...
 
-    // console.log(JSON.stringify(response.data?.tracks[0], null, 2), 'response')
-    return response;
-  } catch (error) {
-    console.error('Error fetching TRACK data:', error);
-    throw new Error('Unable to fetch TRACK data');
-  }
-  // --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
-}
-
-// Example usage of the functions
-
-export function useSpotifyApi() {
-  const initialize = async () => {
-    try {
-      token = await fetchToken();
-      console.log(token, 'token');
-    } catch (error) {
-      console.error('Initialization error:', error);
-    }
-    return token
-  };
-
-  const getCategories = async () => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchCategories(token);
-  };
-  const getGenres = async () => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchGenre(token);
-  };
-
-  const getArtistData = async (artistId: string) => {
-    if (!token) {
-      throw new Error('Access token is not set');
-    }
-    return await fetchArtistData(artistId, token);
-  };
-
-  const getAlbumData = async () => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchAlbumsData(token);
-  };
-
-  const getTracksData = async () => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchTracksData(token);
-  };
-
-  const getRecommendationData = async () => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchRecommendationData(token);
-  };
-
-  const getAlbumTracksData = async (albumId: string) => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchAlbumTracksData(token, albumId);
-  };
-
-  const getTrackData = async (trackId: string) => {
-    if (!token) {
-      token = await fetchAccessToken();
-    }
-    return await fetchTrackData(token, trackId);
-  };
-
-  return {
-    initialize,
-    getCategories,
-    getArtistData,
-    getAlbumData,
-    getTracksData,
-    getRecommendationData,
-    getAlbumTracksData,
-    getTrackData,
-    getGenres,
-  };
-}
-
-// albums
-// several tracks
-// recommendations
+export default axiosInstance; // Export the configured Axios instance if needed

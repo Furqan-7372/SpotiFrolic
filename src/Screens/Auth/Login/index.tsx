@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   Image,
@@ -11,11 +10,20 @@ import {useNavigation} from '@react-navigation/native';
 import {ILoginScreen} from '../../../Interfaces/index';
 import styles from './style';
 import Colors from '../../../Utils/color';
+// import { fetchToken } from '../../../Apis';
+import {useToken} from '../../../Components/TokenCheck/index'
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { login } from '../../../Redux/Slices/AuthSlice' // Import the login action
 
 const LoginScreen: React.FC<ILoginScreen> = () => {
   const navigation = useNavigation<any>(); // Adjust the type if you have specific navigation types
+  // const { getAccessToken } = useSpotifyApi();
+  const dispatch = useDispatch()
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
+    const token = await useToken() as string;
+    console.log('token hai yehhh', token)
+    dispatch(login(token))
     // Navigate to the Home screen
     navigation.navigate('Home');
   };

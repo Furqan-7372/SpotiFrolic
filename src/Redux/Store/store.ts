@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import playlistReducer from '../Slices/PlaylistSlice';
+import authReducer from '../Slices/AuthSlice';
 
 export const store = configureStore({
   reducer: {
-    playlist: playlistReducer,
+    auth: authReducer, // Use 'auth' as the key
   },
 });

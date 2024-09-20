@@ -6,7 +6,7 @@ import styles from './style'; // Import your styles
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {trendingSongs, singers, topPicksSongs} from '../../Utils/data';
 import Tile from '../../Components/Tile';
-import {useSpotifyApi} from '../../Apis/index';
+import {fetchAlbumTracks, fetchTracks, fetchRecommendations} from '../../Apis/index';
 
 type HomeScreenNavigationProp = BottomTabNavigationProp<
   BottomTabParamList,
@@ -21,21 +21,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [albums, setAlbums] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
-  const {getAlbumData, getTracksData, getRecommendationData} = useSpotifyApi();
+  
 
   const albumDataHandler = async () => {
-    const response = await getAlbumData();
-    setAlbums(response?.data?.albums.items);
+    const response = await fetchAlbumTracks();
+    setAlbums(response?.data?.albums?.items || []); // Fallback to empty array
   };
   const trackDataHandler = async () => {
-    const response = await getTracksData();
+    const response = await fetchTracks('7ouMYWpwJ422jRcDASZB7P%4VqPOruhp5EdPBeR92t6lQ%2takcwOaAZWiXQijPHIx7B');
     setTracks(response?.data?.tracks);
   };
   const recommendationDataHandler = async () => {
-    const response = await getRecommendationData();
+    const response = await fetchRecommendations();
     setRecommendations(response?.data?.tracks);
   };
-  function artistHandler(item) {
+  function artistHandler(item: { artists: { name: string }[] }) {
     return item.artists.map(artist => artist.name).join(', ');
   }
 

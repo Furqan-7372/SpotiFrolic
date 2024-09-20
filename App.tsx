@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import {SafeAreaView, StatusBar, StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import WelcomeScreen from './src/Screens/Auth/Welcome';
@@ -13,6 +13,9 @@ import SearchScreen from './src/Screens/Search';
 import LibraryScreen from './src/Screens/Library';
 import PlaylistScreen from './src/Screens/Playlist/index';
 import MusicScreen from './src/Screens/MusicScreen';
+import {Provider, useSelector} from 'react-redux';
+import {store} from './src/Redux/Store/store'
+import {selectIsLoggedIn} from './src/Redux/Slices/AuthSlice'
 
 // Bottom Tabs Navigator
 const BottomTabs = createBottomTabNavigator();
@@ -23,7 +26,7 @@ const AuthStack = createStackNavigator();
 // Playlist Stack Navigator
 const HomeStack = createStackNavigator();
 
-const dummyState = true; // Change this to switch between authentication and main app
+const dummyState = false; // Change this to switch between authentication and main app
 
 function AuthStackScreen() {
   return (
@@ -41,11 +44,14 @@ function HomeStackHandler() {
       screenOptions={{
         headerShown: false,
         presentation: 'modal', // This enables modal presentation
-      }}
-    >
+      }}>
       <HomeStack.Screen name="HomeStack" component={HomeScreen} />
       <HomeStack.Screen name="Playlist" component={PlaylistScreen} />
-      <HomeStack.Screen name="Music" component={MusicScreen} options={{ presentation: 'modal' }} />
+      <HomeStack.Screen
+        name="Music"
+        component={MusicScreen}
+        options={{presentation: 'modal'}}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -102,19 +108,22 @@ function MainAppTabs() {
 }
 
 function Navigation() {
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   return (
     <NavigationContainer>
-      {dummyState ? <MainAppTabs /> : <AuthStackScreen />}
+      {isLoggedIn ? <MainAppTabs /> : <AuthStackScreen />}
     </NavigationContainer>
   );
 }
 
 function App(): React.ReactElement {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
-      <Navigation />
-    </SafeAreaView>
+    <Provider store={store} >
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="light-content" />
+        <Navigation />
+      </SafeAreaView>
+    </Provider>
   );
 }
 

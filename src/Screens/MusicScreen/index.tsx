@@ -43,11 +43,11 @@ const MusicScreen = ({route}) => {
     const response = await getTrackData(trackId);
     setUrl(response?.data?.preview_url)
     setTrack(response?.data);
+    timeHandler()
   };
 
   useEffect(() => {
     albumDataHandler();
-    timeHandler()
   }, []);
 
   return (
