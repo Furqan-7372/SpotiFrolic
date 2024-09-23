@@ -22,10 +22,7 @@ const LoginScreen: React.FC<ILoginScreen> = () => {
 
   const handleLogin = async() => {
     const token = await useToken() as string;
-    console.log('token hai yehhh', token)
     dispatch(login(token))
-    // Navigate to the Home screen
-    navigation.navigate('Home');
   };
 
   const handleSignUp = () => {

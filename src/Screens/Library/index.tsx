@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
 const SectionedScrollView = () => {
   const sections = [
-    { title: 'Section 1', content: ['Item 1', 'Item 2', 'Item 3','Item 1', 'Item 2', 'Item 3'] },
+    { title: 'Section 1', content: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6', 'Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5', 'Item 6', ] },
     { title: 'Section 2', content: ['Item A', 'Item B', 'Item C'] },
     { title: 'Section 3', content: ['Item X', 'Item Y', 'Item Z'] },
   ];
@@ -14,11 +14,13 @@ const SectionedScrollView = () => {
         <View key={index} style={styles.section}>
           <Text style={styles.title}>{section.title}</Text>
           <ScrollView style={styles.scrollView}>
-            {section.content.map((item, idx) => (
-              <Text key={idx} style={styles.item}>
-                {item}
-              </Text>
-            ))}
+            <View style={styles.grid}>
+              {section.content.map((item, idx) => (
+                <View key={idx} style={styles.itemContainer}>
+                  <Text style={styles.item}>{item}</Text>
+                </View>
+              ))}
+            </View>
           </ScrollView>
         </View>
       ))}
@@ -45,12 +47,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   scrollView: {
-    maxHeight: 100, // Set a max height for the scrollable area
+    maxHeight: 200, // Adjust this based on your needs
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  itemContainer: {
+    width: '50%', // Adjust to 50% for two items per row
+    padding: 10,
   },
   item: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    textAlign: 'center',
+    backgroundColor: 'red',
   },
 });
 

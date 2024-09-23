@@ -16,8 +16,7 @@ const axiosInstance = axios.create({
 // Request interceptor to include the access token
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = await useToken(); // Fetch the token
-    console.log(token, 'token idhar bhi hai')
+    const token = await useToken(); // Fetch the tokens
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -71,7 +70,7 @@ export async function fetchToken(): Promise<string> {
 // Function to fetch categories
 export const fetchCategories = async (): Promise<CategoryResponse> => {
   try {
-    const response = await axiosInstance.get('/browse/categories');
+    const response = await axiosInstance.get('browse/categories');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -82,7 +81,7 @@ export const fetchCategories = async (): Promise<CategoryResponse> => {
 // Function to fetch available genre seeds
 export const fetchAvailableGenres = async (): Promise<string[]> => {
   try {
-    const response = await axiosInstance.get('/recommendations/available-genre-seeds');
+    const response = await axiosInstance.get('recommendations/available-genre-seeds');
     return response.data.genres; // Adjust based on the actual response structure
   } catch (error) {
     console.error('Error fetching available genres:', error);
@@ -93,7 +92,7 @@ export const fetchAvailableGenres = async (): Promise<string[]> => {
 // Function to fetch artist details by ID
 export const fetchArtist = async (id: string): Promise<ArtistResponse> => {
   try {
-    const response = await axiosInstance.get(`/artists/${id}`);
+    const response = await axiosInstance.get(`artists/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching artist:', error);
@@ -104,7 +103,7 @@ export const fetchArtist = async (id: string): Promise<ArtistResponse> => {
 // Function to fetch new releases
 export const fetchNewReleases = async (): Promise<AlbumResponse> => {
   try {
-    const response = await axiosInstance.get('/browse/new-releases');
+    const response = await axiosInstance.get('browse/new-releases');
     return response.data;
   } catch (error) {
     console.error('Error fetching new releases:', error);
@@ -115,18 +114,18 @@ export const fetchNewReleases = async (): Promise<AlbumResponse> => {
 // Function to fetch tracks by IDs
 export const fetchTracks = async (ids: string): Promise<TrackResponse> => {
   try {
-    const response = await axiosInstance.get(`/tracks?ids=${ids}`);
+    const response = await axiosInstance.get(`tracks?ids=${ids}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching tracks:', error);
-    throw new Error('Unable to fetch tracks');
+    console.error('Error fetching multiple tracks:', error);
+    throw new Error('Unable to fetch multiple tracks');
   }
 };
 
 // Function to fetch recommendations based on seeds
 export const fetchRecommendations = async (): Promise<RecommendationResponse> => {
   try {
-    const response = await axiosInstance.get(`/recommendations`);
+    const response = await axiosInstance.get(`recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=classical%2Ccountry&seed_tracks=0c6xIDDpzE81m2q797ordA`);
     return response.data;
   } catch (error) {
     console.error('Error fetching recommendations:', error);
@@ -137,7 +136,7 @@ export const fetchRecommendations = async (): Promise<RecommendationResponse> =>
 // Function to fetch album tracks by album ID
 export const fetchAlbumTracks = async (): Promise<TrackResponse> => {
   try {
-    const response = await axiosInstance.get(`/browse/new-releases`);
+    const response = await axiosInstance.get(`browse/new-releases`);
     return response.data;
   } catch (error) {
     console.error('Error fetching album tracks:', error);
@@ -145,17 +144,27 @@ export const fetchAlbumTracks = async (): Promise<TrackResponse> => {
   }
 };
 
+export const fetchAlbum = async (id: string): Promise<TrackResponse> => {
+  try {
+    const response = await axiosInstance.get(`albums/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching single album:', error);
+    throw new Error('Unable to fetch single album');
+  }
+};
+
 // Function to fetch a specific track by ID
 export const fetchTrack = async (id: string): Promise<TrackResponse> => {
   try {
-    const response = await axiosInstance.get(`/tracks/${id}`);
+    const response = await axiosInstance.get(`tracks/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching track:', error);
-    throw new Error('Unable to fetch track');
+    console.error('Error fetching single track:', error);
+    throw new Error('Unable to fetch single track');
   }
 };
 
 // Add more API functions as needed...
 
-export default axiosInstance; // Export the configured Axios instance if needed
+// export default axiosInstance; // Export the configured Axios instance if needed

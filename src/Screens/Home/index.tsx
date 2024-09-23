@@ -4,7 +4,6 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {BottomTabParamList} from '../../Interfaces/index'; // Import your types
 import styles from './style'; // Import your styles
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {trendingSongs, singers, topPicksSongs} from '../../Utils/data';
 import Tile from '../../Components/Tile';
 import {fetchAlbumTracks, fetchTracks, fetchRecommendations} from '../../Apis/index';
 
@@ -25,15 +24,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const albumDataHandler = async () => {
     const response = await fetchAlbumTracks();
-    setAlbums(response?.data?.albums?.items || []); // Fallback to empty array
+    setAlbums(response?.albums?.items || []); // Fallback to empty array
   };
   const trackDataHandler = async () => {
-    const response = await fetchTracks('7ouMYWpwJ422jRcDASZB7P%4VqPOruhp5EdPBeR92t6lQ%2takcwOaAZWiXQijPHIx7B');
-    setTracks(response?.data?.tracks);
+    const response = await fetchTracks('7ouMYWpwJ422jRcDASZB7P%2C4VqPOruhp5EdPBeR92t6lQ%2C2takcwOaAZWiXQijPHIx7B');
+    setTracks(response?.tracks);
   };
   const recommendationDataHandler = async () => {
     const response = await fetchRecommendations();
-    setRecommendations(response?.data?.tracks);
+    setRecommendations(response?.tracks);
   };
   function artistHandler(item: { artists: { name: string }[] }) {
     return item.artists.map(artist => artist.name).join(', ');

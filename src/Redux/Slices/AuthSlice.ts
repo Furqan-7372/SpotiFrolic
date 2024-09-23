@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {AuthState} from '../../Interfaces/index'
+import { PURGE } from 'redux-persist';
 
 // Define the initial state using the PlaylistState type
 const initialState: AuthState = {

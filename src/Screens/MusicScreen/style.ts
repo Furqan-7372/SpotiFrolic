@@ -1,5 +1,7 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import Colors from '../../Utils/color';
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 19,
     textAlign: 'center',
-    width: 280,
+    width: width * 0.6,
   },
   optionsButton: {
     padding: 5,
@@ -48,8 +50,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   albumCover: {
-    width: 400,
-    height: 400,
+    width: width * 0.89,
+    height: height * 0.4,
   },
   musicTitle: {
     alignItems: 'center',

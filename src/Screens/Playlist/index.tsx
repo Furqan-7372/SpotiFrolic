@@ -5,8 +5,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign'; // For AntDesign ic
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from './style';
 import Colors from '../../Utils/color';
-import {useSpotifyApi} from '../../Apis';
 import Share from 'react-native-share';
+import {fetchAlbum} from '../../Apis/index'
 
 const PlaylistScreen = ({route}) => {
   const {albumName, artists, albumId} = route.params;
@@ -16,7 +16,22 @@ const PlaylistScreen = ({route}) => {
   const [timeDuration, setTimeDuration] = useState(0);
   const [hours, setHours] = useState(0);
   const [mins, setMins] = useState(0);
-  const {getAlbumTracksData} = useSpotifyApi();
+  const [url, setUrl] = useState('')
+  
+  function shareButtonHandler() {
+    const options = {
+      title: 'Sharing Song',
+      message: 'Check out this song',
+      url: url,
+    };
+    Share.open(options)
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    err && console.log(err);
+  });
+  }
 
   const handlePlayPause = (trackId: string, name: string) => {
     setIsPlaying(!isPlaying);
@@ -53,8 +68,9 @@ const PlaylistScreen = ({route}) => {
   );
 
   const albumDataHandler = async () => {
-    const response = await getAlbumTracksData(albumId);
-    setAlbums(response?.data?.items);
+    const response = await fetchAlbum(albumId);
+    setUrl(response?.external_urls?.spotify)
+    setAlbums(response?.tracks?.items);
     timeCalculator();
   };
   const timeCalculator = () => {
@@ -118,7 +134,7 @@ const PlaylistScreen = ({route}) => {
           <Pressable
             style={styles.moreButton}
             android_ripple={{color: Colors.primary0 + '80'}}
-            onPress={() => console.log('More options pressed')}>
+            onPress={shareButtonHandler}>
             <Ionicons
               name="ellipsis-vertical-outline"
               color={Colors.primary0}

@@ -14,8 +14,12 @@ import LibraryScreen from './src/Screens/Library';
 import PlaylistScreen from './src/Screens/Playlist/index';
 import MusicScreen from './src/Screens/MusicScreen';
 import {Provider, useSelector} from 'react-redux';
-import {store} from './src/Redux/Store/store'
-import {selectIsLoggedIn} from './src/Redux/Slices/AuthSlice'
+import {store, persistor} from './src/Redux/Store/store';
+import {selectIsLoggedIn} from './src/Redux/Slices/AuthSlice';
+import {PersistGate} from 'redux-persist/lib/integration/react';
+import { ActivityIndicator } from 'react-native';
+
+
 
 // Bottom Tabs Navigator
 const BottomTabs = createBottomTabNavigator();
@@ -25,8 +29,6 @@ const AuthStack = createStackNavigator();
 
 // Playlist Stack Navigator
 const HomeStack = createStackNavigator();
-
-const dummyState = false; // Change this to switch between authentication and main app
 
 function AuthStackScreen() {
   return (
@@ -71,7 +73,7 @@ function MainAppTabs() {
         },
       }}>
       <BottomTabs.Screen
-        name="Home"
+        name="HomeScreen"
         component={HomeStackHandler}
         options={{
           tabBarLabel: 'Home',
@@ -118,11 +120,13 @@ function Navigation() {
 
 function App(): React.ReactElement {
   return (
-    <Provider store={store} >
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar barStyle="light-content" />
-        <Navigation />
-      </SafeAreaView>
+    <Provider store={store}>
+      <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar barStyle="light-content" />
+          <Navigation />
+        </SafeAreaView>
+      </PersistGate>
     </Provider>
   );
 }

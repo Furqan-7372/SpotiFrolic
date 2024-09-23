@@ -10,11 +10,11 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import styles from './style';
 import Colors from '../../Utils/color';
 import getRandomVibrantColor from '../../Components/RandomColors';
-import { useSpotifyApi } from '../../Apis/index';
 import { Category } from '../../Interfaces';
+import {fetchCategories, fetchAvailableGenres} from '../../Apis/index';
+
 
 const SearchScreen: React.FC = () => {
-  const { getCategories, getGenres } = useSpotifyApi();
   const [categories, setCategories] = useState<Category[]>([]);
   const [genres, setGenres] = useState<string[]>([]); // Assume genres is an array of strings
   const [loading, setLoading] = useState<boolean>(true);
@@ -22,11 +22,10 @@ const SearchScreen: React.FC = () => {
 
   const ApiCallHandler = async () => {
     try {
-      const categoriesData = await getCategories();
+      const categoriesData = await fetchCategories();
       setCategories(categoriesData.categories.items);
 
-      const genresData = await getGenres(); // Assuming this fetches genres
-      console.log(genresData)
+      const genresData = await fetchAvailableGenres(); // Assuming this fetches genres
       setGenres(genresData);
     } catch (err) {
       console.error(err);

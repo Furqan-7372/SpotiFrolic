@@ -3,25 +3,34 @@ import {View, Text, TouchableOpacity, Image, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import styles from './style';
-import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../Utils/color';
-import { useSpotifyApi } from '../../Apis';
-import SoundPlayer from 'react-native-sound-player';
 import MusicPlayer from '../../Components/MusicPlayer';
-
+import {fetchTrack} from '../../Apis/index'
+import Share from 'react-native-share';
 
 const MusicScreen = ({route}) => {
   const { trackId, name } = route.params;
-  const {getTrackData} = useSpotifyApi()
   const navigation = useNavigation();
   const [track, setTrack] = useState();
   const [mins, setMins] = useState('')
   const [secs, setSecs] = useState('')
   const [url, setUrl] = useState('')
 
-
-
+  function shareButtonHandler() {
+    const options = {
+      title: 'Sharing Song',
+      message: 'Check out this song',
+      url: url,
+    };
+    Share.open(options)
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    err && console.log(err);
+  });
+  }
   
   function artistHandler() {
     return track?.artists?.map(artist => artist.name).join(', ');
@@ -40,9 +49,9 @@ const MusicScreen = ({route}) => {
   }
 
   const albumDataHandler = async () => {
-    const response = await getTrackData(trackId);
-    setUrl(response?.data?.preview_url)
-    setTrack(response?.data);
+    const response = await fetchTrack(trackId);
+    setUrl(response?.preview_url)
+    setTrack(response);
     timeHandler()
   };
 
@@ -93,7 +102,7 @@ const MusicScreen = ({route}) => {
         <TouchableOpacity style={styles.controlButton}>
           <FontAwesome5 name="desktop" size={20} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton}>
+        <TouchableOpacity onPress={shareButtonHandler} style={styles.controlButton}>
           <FontAwesome5 name="share-alt" size={20} color="white" />
         </TouchableOpacity>
       </View>
