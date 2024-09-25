@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   headerContainer: {
+    flex: 1,
     alignItems: 'center',
+    paddingLeft: 25,
   },
   headerText: {
     color: 'white',

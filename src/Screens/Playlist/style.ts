@@ -4,20 +4,28 @@ import Colors from '../../Utils/color';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primary50,
+    paddingTop: 350,
+    // backgroundColor: Colors.primary50,
   },
   header: {
-    flexDirection: 'row',
+    backgroundColor: 'black',
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center',
   },
-  backArrow: {
-    flex: 1,
-    padding: 16,
+  headerText: {
+    color: 'white',
+    fontSize: 20,
+    marginLeft: 10,
   },
   imageContainer: {
-    flex: 7,
-    width: 300,
-    height: 280,
-    padding: 20,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    width: 450,
+    height: 300,
+    top: 20,
   },
   image: {
     width: 250,
@@ -61,7 +69,7 @@ const styles = StyleSheet.create({
   songList: {
     marginTop: 16,
     paddingHorizontal: 16,
-    paddingBottom: 60,
+    paddingBottom: 380,
   },
   songItem: {
     flexDirection: 'row',

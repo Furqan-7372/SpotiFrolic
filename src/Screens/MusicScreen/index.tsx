@@ -62,11 +62,6 @@ const MusicScreen = ({route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <FontAwesome5 name="chevron-down" size={20} color="white" />
-        </TouchableOpacity>
         <View style={styles.headerContainer} >
           <Text style={styles.headerText}>PLAYING FROM SEARCH</Text>
           <Text style={styles.headerSubText}>"{name}" in Songs</Text>

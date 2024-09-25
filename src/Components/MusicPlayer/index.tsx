@@ -54,11 +54,11 @@ const MusicPlayer = ({url}) => {
   };
 
   useEffect(() => {
-    if (url) {
+    
       getDuration();
       setCurrentTime(0); // Reset current time when URL changes
-    }
-  }, [url]);
+    
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -71,6 +71,8 @@ const MusicPlayer = ({url}) => {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
+
+  
 
   return (
     <View style={styles.container}>

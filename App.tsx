@@ -17,8 +17,10 @@ import {Provider, useSelector} from 'react-redux';
 import {store, persistor} from './src/Redux/Store/store';
 import {selectIsLoggedIn} from './src/Redux/Slices/AuthSlice';
 import {PersistGate} from 'redux-persist/lib/integration/react';
-import { ActivityIndicator } from 'react-native';
-
+import {ActivityIndicator} from 'react-native';
+import {TouchableOpacity} from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign'; // For AntDesign icons
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 // Bottom Tabs Navigator
@@ -44,15 +46,49 @@ function HomeStackHandler() {
   return (
     <HomeStack.Navigator
       screenOptions={{
-        headerShown: false,
         presentation: 'modal', // This enables modal presentation
       }}>
-      <HomeStack.Screen name="HomeStack" component={HomeScreen} />
-      <HomeStack.Screen name="Playlist" component={PlaylistScreen} />
+      <HomeStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{headerShown: false}}
+      />
+      <HomeStack.Screen
+        name="Playlist"
+        component={PlaylistScreen}
+        options={({navigation}) => ({
+          headerShown: true,
+          headerStyle: {backgroundColor: 'transparent'},
+          headerTintColor: 'white',
+          headerTitle: '',
+          headerTransparent: true,
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{padding: 16}}
+              onPress={() => navigation.goBack()}>
+              <AntDesign name="left" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <HomeStack.Screen
         name="Music"
         component={MusicScreen}
-        options={{presentation: 'modal'}}
+        options={({navigation}) => ({
+          presentation: 'modal',
+          headerShown: true,
+          headerStyle: {backgroundColor: 'transparent',   height: 100, },
+          headerTintColor: 'white',
+          headerTitle: '',
+          headerTransparent: true,
+          headerLeft: () => (
+            <TouchableOpacity
+              style={{ padding: 25}}
+              onPress={() => navigation.goBack()}>
+              <FontAwesome5 name="chevron-down" size={25} color="white" />
+            </TouchableOpacity>
+          ),
+        })}
       />
     </HomeStack.Navigator>
   );
@@ -73,7 +109,7 @@ function MainAppTabs() {
         },
       }}>
       <BottomTabs.Screen
-        name="HomeScreen"
+        name="HomeStack"
         component={HomeStackHandler}
         options={{
           tabBarLabel: 'Home',
