@@ -19,9 +19,7 @@ import {selectIsLoggedIn} from './src/Redux/Slices/AuthSlice';
 import {PersistGate} from 'redux-persist/lib/integration/react';
 import {ActivityIndicator} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign'; // For AntDesign icons
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
 
 // Bottom Tabs Navigator
 const BottomTabs = createBottomTabNavigator();
@@ -56,19 +54,12 @@ function HomeStackHandler() {
       <HomeStack.Screen
         name="Playlist"
         component={PlaylistScreen}
-        options={({navigation}) => ({
+        options={() => ({
           headerShown: true,
           headerStyle: {backgroundColor: 'transparent'},
           headerTintColor: 'white',
           headerTitle: '',
           headerTransparent: true,
-          headerLeft: () => (
-            <TouchableOpacity
-              style={{padding: 16}}
-              onPress={() => navigation.goBack()}>
-              <AntDesign name="left" size={24} color="white" />
-            </TouchableOpacity>
-          ),
         })}
       />
       <HomeStack.Screen
@@ -77,13 +68,13 @@ function HomeStackHandler() {
         options={({navigation}) => ({
           presentation: 'modal',
           headerShown: true,
-          headerStyle: {backgroundColor: 'transparent',   height: 100, },
+          headerStyle: {backgroundColor: 'transparent', height: 100},
           headerTintColor: 'white',
           headerTitle: '',
           headerTransparent: true,
           headerLeft: () => (
             <TouchableOpacity
-              style={{ padding: 25}}
+              style={{padding: 25}}
               onPress={() => navigation.goBack()}>
               <FontAwesome5 name="chevron-down" size={25} color="white" />
             </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useLayoutEffect} from 'react';
 import {View, Text, Image, ScrollView, Pressable, Animated} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -7,19 +7,16 @@ import styles from './style';
 import Colors from '../../Utils/color';
 import Share from 'react-native-share';
 import {fetchAlbum} from '../../Apis/index';
+import {TouchableOpacity} from 'react-native';
 
 const PlaylistScreen = ({route}) => {
   const {albumName, artists, albumId} = route.params;
-  // const albumId = '4aawyAB9vmqN3uQ7FjRGTy';
-  // const albumName = 'Global Warming';
-  // const artists = 'Pitbull';
   const navigation = useNavigation();
   const [albums, setAlbums] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hours, setHours] = useState(0);
   const [mins, setMins] = useState(0);
   const [url, setUrl] = useState('');
-  // const [scrollY, setScrollY] = useState(0);
   const [headerTitle, setHeaderTitle] = useState(''); // Initialize header title as empty
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -71,36 +68,70 @@ const PlaylistScreen = ({route}) => {
     setMins(Math.floor((totalDuration / (1000 * 60)) % 60));
   };
 
-  const headerHeight = scrollY.interpolate({
+  const imageHeight = scrollY.interpolate({
     inputRange: [0, 300], // Adjust these values based on your needs
     outputRange: [300, 150], // Start and end heights
     extrapolate: 'clamp', // Prevents going beyond defined range
   });
 
-  const headerWidth = scrollY.interpolate({
+  const imageWidth = scrollY.interpolate({
     inputRange: [0, 300],
-    outputRange: [400, 200], // Start and end widths
+    outputRange: [350, 200], // Start and end widths
     extrapolate: 'clamp',
   });
 
   const scale = scrollY.interpolate({
     inputRange: [0, 250], // Adjust these values based on your needs
-    outputRange: [1, 0], // Scale from 1 to 0.8 as you scroll
+    outputRange: [1, 0], // scale from 1 to 0.8 as you scroll
     extrapolate: 'clamp',
   });
 
-  const headerOpacity = scrollY.interpolate({
+  const imageOpacity = scrollY.interpolate({
     inputRange: [0, 200], // Adjust this range based on how far you want to scroll before it becomes fully transparent
     outputRange: [1, 0], // Start with full opacity and reduce to 0
     extrapolate: 'clamp', // Prevents going beyond defined range
   });
 
-  useEffect(() => {
-    // Set the header title and options
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [290, 300], // Adjust these values as needed
+    outputRange: [0, 1], // Start fully transparent, end fully opaque
+    extrapolate: 'clamp',
+  });
+
+  const headerBackgroundColor = scrollY.interpolate({
+    inputRange: [270, 275], // Adjust these values as needed
+    outputRange: ['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 1)'], // Start transparent, end opaque
+    extrapolate: 'clamp',
+  });
+
+  useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: headerTitle, // Set the header title based on state
-      headerStyle: { backgroundColor: 'black' },
+      header: () => (
+        <View style={{flexDirection: 'row', paddingVertical: 10, }}>
+          <TouchableOpacity
+            style={{padding: 16, backgroundColor: headerBackgroundColor}}
+            onPress={() => navigation.goBack()}>
+            <AntDesign name="left" size={24} color="white" />
+          </TouchableOpacity>
+          <Animated.View
+            style={{
+              opacity: headerOpacity,
+              backgroundColor: headerBackgroundColor,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 25,
+                paddingVertical: 10,
+              }}>
+              {headerTitle}
+            </Text>
+          </Animated.View>
+        </View>
+      ),
+      headerStyle: {backgroundColor: headerBackgroundColor},
       headerTintColor: 'white',
+      headerShown: true, // Ensure the header is shown
     });
 
     const fetchData = async () => {
@@ -115,24 +146,22 @@ const PlaylistScreen = ({route}) => {
     };
 
     fetchData();
-  }, [navigation, albumName]);
+  }, [navigation, headerTitle, albumId]); // Include albumId to refetch data when it changes
 
   useEffect(() => {
-    const listenerId = scrollY.addListener(({ value }) => {
-      if (value > 100 && headerTitle !== albumName) { // Change threshold as needed
+    const listenerId = scrollY.addListener(({value}) => {
+      if (value > 0 && headerTitle !== albumName) {
+        // Change threshold as needed
         setHeaderTitle(albumName);
-      } else if (value <= 100 && headerTitle !== '') {
+      } else if (value <= 0 && headerTitle !== '') {
         setHeaderTitle('');
       }
     });
-
-    console.log(scrollY, 'ScrollY')
 
     return () => {
       scrollY.removeListener(listenerId);
     };
   }, [scrollY, headerTitle, albumName]);
-
 
   const renderAlbumItems = () => {
     return albums.map(item => renderItem(item));
@@ -150,10 +179,10 @@ const PlaylistScreen = ({route}) => {
           style={[
             styles.image,
             {
-              height: headerHeight,
-              width: headerWidth,
+              height: imageHeight,
+              width: imageWidth,
               transform: [{scale}],
-              opacity: headerOpacity,
+              opacity: imageOpacity,
             },
           ]}
         />
