@@ -164,7 +164,3 @@ export const fetchTrack = async (id: string): Promise<TrackResponse> => {
     throw new Error('Unable to fetch single track');
   }
 };
-
-// Add more API functions as needed...
-
-// export default axiosInstance; // Export the configured Axios instance if needed
